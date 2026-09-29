@@ -1,0 +1,6 @@
+{
+  "name": "JSON Validator with Error Recovery",
+  "description": "Automata theory-driven JSON validator and error recovery engine implementing CFG parsing, PDA stack simulation, and automated repair for LLM syntax defects.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

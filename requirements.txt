@@ -1,0 +1,7 @@
+# JSON Validator with Error Recovery
+# Core parsing, lexing, and evaluation rely purely on Python Standard Library (Python 3.8+)
+# No external dependencies are mandatory for execution.
+
+# Optional development & testing utilities:
+pytest>=7.4.0
+tabulate>=0.9.0

@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "category": "valid",
+    "expected_valid": true,
+    "expected_error": null,
+    "description": "Standard object with primitives and null",
+    "payload": "{\n  \"model\": \"gemini-2.5-flash\",\n  \"tokens\": 142,\n  \"cached\": false,\n  \"latency\": 0.45,\n  \"metadata\": null\n}"
+  },
+  {
+    "id": 2,
+    "category": "valid",
+    "expected_valid": true,
+    "expected_error": null,
+    "description": "Nested object structure representing user profile",
+    "payload": "{\n  \"status\": \"success\",\n  \"data\": {\n    \"user\": {\n      \"id\": 1024,\n      \"name\": \"Alan Turing\",\n      \"roles\": [\"admin\", \"researcher\"]\n    }\n  }\n}"
+  },
+  {
+    "id": 3,
+    "category": "valid",
+    "expected_valid": true,
+    "expected_error": null,
+    "description": "Homogeneous array of floating point numbers",
+    "payload": "[\n  0.1523,\n  -1.4298,\n  3.14159,\n  2.71828,\n  0.0\n]"
+  },
+  {
+    "id": 4,
+    "category": "valid",
+    "expected_valid": true,
+    "expected_error": null,
+    "description": "Array of entity records typical in LLM tool outputs",
+    "payload": "[\n  {\"id\": 1, \"name\": \"item_alpha\", \"active\": true},\n  {\"id\": 2, \"name\": \"item_beta\", \"active\": false}\n]"
+  },
+  {
+    "id": 5,
+    "category": "valid",
+    "expected_valid": true,
+    "expected_error": null,
+    "description": "Minimal empty object and empty array payload",
+    "payload": "{\n  \"results\": [],\n  \"config\": {}\n}"
+  },
+  {
+    "id": 6,
+    "category": "trailing_comma",
+    "expected_valid": false,
+    "expected_error": "TRAILING_COMMA",
+    "description": "Extraneous trailing comma before closing brace in object",
+    "payload": "{\n  \"name\": \"Alice\",\n  \"role\": \"Engineer\",\n}"
+  },
+  {
+    "id": 7,
+    "category": "trailing_comma",
+    "expected_valid": false,
+    "expected_error": "TRAILING_COMMA",
+    "description": "Trailing comma at the end of a scalar list",
+    "payload": "[\n  \"alpha\",\n  \"beta\",\n  \"gamma\",\n]"
+  },
+  {
+    "id": 8,
+    "category": "trailing_comma",
+    "expected_valid": false,
+    "expected_error": "TRAILING_COMMA",
+    "description": "Trailing comma inside nested configuration map",
+    "payload": "{\n  \"server\": {\n    \"host\": \"localhost\",\n    \"port\": 8080,\n  }\n}"
+  },
+  {
+    "id": 9,
+    "category": "missing_comma",
+    "expected_valid": false,
+    "expected_error": "MISSING_COMMA",
+    "description": "Missing comma between key-value pairs in an object",
+    "payload": "{\n  \"title\": \"Automata Theory\"\n  \"author\": \"Hopcroft & Ullman\"\n}"
+  },
+  {
+    "id": 10,
+    "category": "missing_comma",
+    "expected_valid": false,
+    "expected_error": "MISSING_COMMA",
+    "description": "Missing comma between array numeric elements",
+    "payload": "[\n  100\n  200,\n  300\n]"
+  },
+  {
+    "id": 11,
+    "category": "missing_comma",
+    "expected_valid": false,
+    "expected_error": "MISSING_COMMA",
+    "description": "Missing comma between items in a list of nested objects",
+    "payload": "[\n  {\"id\": 1}\n  {\"id\": 2}\n]"
+  },
+  {
+    "id": 12,
+    "category": "unquoted_key",
+    "expected_valid": false,
+    "expected_error": "UNQUOTED_KEY",
+    "description": "Bare identifier used as dictionary key (common JS/Python LLM artifact)",
+    "payload": "{\n  name: \"GPT-4o\",\n  \"version\": 1.0\n}"
+  },
+  {
+    "id": 13,
+    "category": "unquoted_key",
+    "expected_valid": false,
+    "expected_error": "UNQUOTED_KEY",
+    "description": "Unquoted key with underscore in response dictionary",
+    "payload": "{\n  \"status\": 200,\n  response_time: 120\n}"
+  },
+  {
+    "id": 14,
+    "category": "unquoted_key",
+    "expected_valid": false,
+    "expected_error": "UNQUOTED_KEY",
+    "description": "Multiple unquoted keys in nested configuration payload",
+    "payload": "{\n  database: {\n    host: \"127.0.0.1\",\n    \"port\": 5432\n  }\n}"
+  },
+  {
+    "id": 15,
+    "category": "missing_closing_brace",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACE",
+    "description": "Premature truncation omitting outer closing brace",
+    "payload": "{\n  \"service\": \"authenticator\",\n  \"enabled\": true"
+  },
+  {
+    "id": 16,
+    "category": "missing_closing_brace",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACE",
+    "description": "Inner nested dictionary missing its terminating brace",
+    "payload": "{\n  \"outer\": {\n    \"inner_key\": \"inner_val\"\n}"
+  },
+  {
+    "id": 17,
+    "category": "missing_closing_brace",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACE",
+    "description": "LLM response truncated mid-token without closing brace",
+    "payload": "{\n  \"query\": \"SELECT * FROM users;\",\n  \"rows_returned\": 42\n"
+  },
+  {
+    "id": 18,
+    "category": "missing_closing_bracket",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACKET",
+    "description": "Array of tags missing ending square bracket",
+    "payload": "[\n  \"compiler\",\n  \"context_free_grammar\",\n  \"pushdown_automaton\""
+  },
+  {
+    "id": 19,
+    "category": "missing_closing_bracket",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACKET",
+    "description": "Array embedded inside object missing closing bracket",
+    "payload": "{\n  \"items\": [\n    \"item1\",\n    \"item2\"\n}"
+  },
+  {
+    "id": 20,
+    "category": "missing_closing_bracket",
+    "expected_valid": false,
+    "expected_error": "MISSING_CLOSING_BRACKET",
+    "description": "Nested multidimensional matrix missing terminating bracket",
+    "payload": "[\n  [1, 2, 3],\n  [4, 5, 6]"
+  }
+]
