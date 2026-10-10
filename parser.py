@@ -88,3 +88,65 @@ class Parser:
                 token=tok,
                 expected="JSON value",
             )
+            
+            def parse_object(self) -> None:
+        lbrace_tok = self._consume(Lexer.TOKEN_LBRACE, "{")
+        self.pda_stack.append("}")
+        if self._match(Lexer.TOKEN_RBRACE):
+            self._advance()
+            self.pda_stack.pop()
+            return
+        while True:
+            self.parse_pair()
+            if self._match(Lexer.TOKEN_COMMA):
+                comma_tok = self._advance()
+                if self._match(Lexer.TOKEN_RBRACE):
+                    raise ParseError(
+                        message="Trailing comma detected before closing brace '}'",
+                        token=comma_tok,
+                        expected="key-value pair or remove comma",
+                    )
+            elif self._match(Lexer.TOKEN_RBRACE):
+                self._advance()
+                self.pda_stack.pop()
+                break
+            elif self._match(Lexer.TOKEN_EOF):
+                raise ParseError(
+                    message=f"Missing closing brace '}}' for object starting at line {lbrace_tok.line}, column {lbrace_tok.column}",
+                    token=self._current_token(),
+                    expected="'}'",
+                )
+            else:
+                tok = self._current_token()
+                raise ParseError(
+                    message=f"Expected ',' delimiter between object members, found '{tok.value}'",
+                    token=tok,
+                    expected="','",
+                )
+
+    def parse_pair(self) -> None:
+        tok = self._current_token()
+        if tok.type == Lexer.TOKEN_STRING:
+            self._advance()
+        elif tok.type == Lexer.TOKEN_IDENTIFIER:
+            self._advance()
+            raise ParseError(
+                message=f"Unquoted object key '{tok.value}'",
+                token=tok,
+                expected=f'"{tok.value}"',
+            )
+        else:
+            raise ParseError(
+                message=f"Expected string key in object pair, found '{tok.value if tok.value else tok.type}'",
+                token=tok,
+                expected="quoted string key",
+            )
+        if self._match(Lexer.TOKEN_COLON):
+            self._advance()
+        else:
+            raise ParseError(
+                message=f"Expected ':' after object key, found '{self._current_token().value}'",
+                token=self._current_token(),
+                expected="':'",
+            )
+        self.parse_value()
