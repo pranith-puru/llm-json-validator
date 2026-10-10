@@ -150,3 +150,38 @@ class Parser:
                 expected="':'",
             )
         self.parse_value()
+        
+        def parse_array(self) -> None:
+        lbracket_tok = self._consume(Lexer.TOKEN_LBRACKET, "[")
+        self.pda_stack.append("]")
+        if self._match(Lexer.TOKEN_RBRACKET):
+            self._advance()
+            self.pda_stack.pop()
+            return
+        while True:
+            self.parse_value()
+            if self._match(Lexer.TOKEN_COMMA):
+                comma_tok = self._advance()
+                if self._match(Lexer.TOKEN_RBRACKET):
+                    raise ParseError(
+                        message="Trailing comma detected before closing bracket ']'",
+                        token=comma_tok,
+                        expected="array element or remove comma",
+                    )
+            elif self._match(Lexer.TOKEN_RBRACKET):
+                self._advance()
+                self.pda_stack.pop()
+                break
+            elif self._match(Lexer.TOKEN_EOF):
+                raise ParseError(
+                    message=f"Missing closing bracket ']' for array starting at line {lbracket_tok.line}, column {lbracket_tok.column}",
+                    token=self._current_token(),
+                    expected="']'",
+                )
+            else:
+                tok = self._current_token()
+                raise ParseError(
+                    message=f"Expected ',' delimiter between array elements, found '{tok.value}'",
+                    token=tok,
+                    expected="','",
+                )
