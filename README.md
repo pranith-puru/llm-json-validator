@@ -40,3 +40,8 @@ llm-json-validator/
 ├── llm_dataset.json       # 20-sample benchmark dataset (5 valid, 15 malformed)
 ├── requirements.txt       # Project dependencies (pure Python standard library)
 └── README.md              # Project documentation
+
+Author ,
+
+Pranith C Gowda
+
