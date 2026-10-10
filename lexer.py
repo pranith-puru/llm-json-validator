@@ -25,3 +25,50 @@ class Token:
             and self.line == other.line
             and self.column == other.column
         )
+        
+        class Lexer:
+    """
+    Lexical Analyzer for JSON.
+    Tokenizes input strings into a sequence of Tokens while tracking 1-indexed
+    line and column numbers.
+    """
+    TOKEN_LBRACE = "LBRACE"
+    TOKEN_RBRACE = "RBRACE"
+    TOKEN_LBRACKET = "LBRACKET"
+    TOKEN_RBRACKET = "RBRACKET"
+    TOKEN_COLON = "COLON"
+    TOKEN_COMMA = "COMMA"
+    TOKEN_STRING = "STRING"
+    TOKEN_NUMBER = "NUMBER"
+    TOKEN_TRUE = "TRUE"
+    TOKEN_FALSE = "FALSE"
+    TOKEN_NULL = "NULL"
+    TOKEN_IDENTIFIER = "IDENTIFIER"
+    TOKEN_EOF = "EOF"
+
+    def __init__(self, text: str):
+        self.text = text
+        self.length = len(text)
+        self.pos = 0
+        self.line = 1
+        self.column = 1
+
+    def _peek(self, offset: int = 0) -> str:
+        """Look ahead without consuming characters."""
+        target = self.pos + offset
+        if target < self.length:
+            return self.text[target]
+        return ""
+
+    def _advance(self) -> str:
+        """Consume and return current character, updating line and column."""
+        if self.pos >= self.length:
+            return ""
+        ch = self.text[self.pos]
+        self.pos += 1
+        if ch == "\n":
+            self.line += 1
+            self.column = 1
+        else:
+            self.column += 1
+        return ch
