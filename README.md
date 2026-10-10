@@ -1,47 +1,32 @@
 # LLM JSON Validator with Error Recovery
 
-An Automata Theory and Formal Languages (TOC) driven JSON validator and error recovery engine designed to detect, locate, and automatically repair syntax defects in malformed, LLM-generated JSON payloads.
+An Automata Theory and Formal Languages (TOC) college project implementing a **Context-Free Grammar (CFG) Parser** and **Pushdown Automaton (PDA) Stack Simulation** in Python to detect, locate, and automatically repair syntax defects in malformed, LLM-generated JSON payloads.
 
 ---
 
 ## 📌 Project Overview
 
-Large Language Models (LLMs) frequently generate "almost-valid" JSON outputs—introducing subtle syntax defects such as trailing commas, unquoted keys, missing delimiter commas, or unclosed structural braces. Standard JSON parsers (such as Python's native `json.loads()`) reject these payloads instantly without providing actionable fix suggestions or context-aware error recovery.
+Large Language Models (LLMs) like ChatGPT, Gemini, and Claude frequently generate "almost-valid" JSON outputs—exhibiting defects like trailing commas, unquoted object keys, missing delimiter commas, or unclosed braces/brackets due to output stream truncation.
 
-This project implements a formal **Context-Free Grammar (CFG)** and **Pushdown Automaton (PDA)** stack execution engine in pure Python 3. It validates input payloads, tracks exact line and column coordinates, identifies specific defect patterns, and generates 1-click repair suggestions.
-
----
-
-## 🚀 Key Features
-
-- **Formal CFG & PDA Execution:** Implements recursive descent parsing with an explicit Pushdown Automaton stack (`$`, `}`, `]`) to enforce JSON context-free grammar invariants without relying on native C-level parsers.
-- **Precise Location Metadata:** Tracks 1-indexed line and column coordinates across token streams for exact error reporting.
-- **Automated Error Diagnosis & Repair Engine:** Detects and provides explicit fix suggestions for the 5 most common LLM syntax defects:
-  1. **Trailing Comma:** `{"a": 1,}` $\rightarrow$ Suggests removing extraneous comma before `}` or `]`.
-  2. **Unquoted Key:** `{name: "Alice"}` $\rightarrow$ Suggests wrapping unquoted identifier in double quotes.
-  3. **Missing Comma:** `{"a": 1 "b": 2}` $\rightarrow$ Suggests inserting `,` between adjacent elements.
-  4. **Missing Closing Brace:** `{"a": 1` $\rightarrow$ Detects unclosed object and suggests appending `}`.
-  5. **Missing Closing Bracket:** `["a", "b"` $\rightarrow$ Detects unclosed array and suggests appending `]`.
-- **Empirical Benchmarking Suite:** Evaluates performance over a 20-sample LLM dataset against Python's native `json.loads()`, tracking Accuracy, False-Negative Rate (FNR), and Diagnostic Accuracy.
+Rather than using native parsers that throw generic errors and halt execution, this project implements a formal language processing pipeline that:
+1. **Scans** input text using a custom Lexer with precise line and column metadata tracking.
+2. **Validates** syntax via a Recursive Descent Parser that explicitly simulates Pushdown Automaton ($PDA$) stack transitions.
+3. **Diagnoses & Repairs** common syntax violations using a dedicated Error Recovery Engine with actionable fix suggestions.
+4. **Evaluates** comparative performance against Python's native `json.loads()` across a 20-sample LLM output dataset.
 
 ---
 
-## 🛠️ Project Architecture & File Division
+## 🏗️ Architecture & File Structure
 
 ```text
-llm-json-validator/
-├── main.py                # CLI entry point, interactive REPL shell & batch driver
-├── lexer.py               # Lexical analyzer with precise line/column tracking
-├── parser.py              # CFG recursive descent parser with PDA stack simulation
-├── error_recovery.py      # Diagnostic engine & 1-click repair suggestion generator
-├── validator.py           # Top-level API wrapper exposing validate_json(text)
-├── test_cases.py          # Unit test suite verifying valid payloads & defect recovery
-├── evaluation.py         # Comparative benchmark script vs native json.loads()
-├── llm_dataset.json       # 20-sample benchmark dataset (5 valid, 15 malformed)
-├── requirements.txt       # Project dependencies (pure Python standard library)
+json-validator-with-error-recovery/
+├── main.py                # CLI entry point (Interactive REPL, file validator, benchmark runner)
+├── lexer.py               # Lexical Analyzer tracking line & column positions
+├── parser.py              # Recursive Descent Parser with PDA stack simulation ($)
+├── error_recovery.py      # Automated Repair & Diagnostic Engine for 5 LLM error modes
+├── validator.py           # Core public API: validate_json(text)
+├── test_cases.py          # Comprehensive Unit Test Suite
+├── evaluation.py          # Benchmark Framework comparing performance against json.loads()
+├── llm_dataset.json       # 20-sample LLM test dataset (5 valid, 15 malformed)
+├── requirements.txt       # Dependencies (pure Python 3.8+ standard library)
 └── README.md              # Project documentation
-
-Author ,
-
-Pranith C Gowda
-
