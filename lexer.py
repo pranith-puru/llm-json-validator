@@ -5,8 +5,10 @@ Token class definition for JSON Lexical Analysis with location tracking.
 """
 from typing import List
 
+
 class Token:
     """Represents a lexical token with type, literal value, and source location."""
+
     def __init__(self, type: str, value: str, line: int, column: int):
         self.type = type
         self.value = value
@@ -25,13 +27,15 @@ class Token:
             and self.line == other.line
             and self.column == other.column
         )
-        
-        class Lexer:
+
+
+class Lexer:
     """
     Lexical Analyzer for JSON.
     Tokenizes input strings into a sequence of Tokens while tracking 1-indexed
     line and column numbers.
     """
+
     TOKEN_LBRACE = "LBRACE"
     TOKEN_RBRACE = "RBRACE"
     TOKEN_LBRACKET = "LBRACKET"
@@ -72,7 +76,7 @@ class Token:
         else:
             self.column += 1
         return ch
-    
+
     def _skip_whitespace_and_comments(self) -> None:
         """Skip whitespace characters and single/multi-line comments."""
         while self.pos < self.length:
@@ -150,3 +154,42 @@ class Token:
             return Token(self.TOKEN_NULL, val, start_line, start_col)
         else:
             return Token(self.TOKEN_IDENTIFIER, val, start_line, start_col)
+
+    def tokenize(self) -> List[Token]:
+        """Scans source text and produces a list of Tokens ending in EOF."""
+        tokens: List[Token] = []
+        while self.pos < self.length:
+            self._skip_whitespace_and_comments()
+            if self.pos >= self.length:
+                break
+            ch = self._peek()
+            start_line, start_col = self.line, self.column
+            if ch == "{":
+                self._advance()
+                tokens.append(Token(self.TOKEN_LBRACE, "{", start_line, start_col))
+            elif ch == "}":
+                self._advance()
+                tokens.append(Token(self.TOKEN_RBRACE, "}", start_line, start_col))
+            elif ch == "[":
+                self._advance()
+                tokens.append(Token(self.TOKEN_LBRACKET, "[", start_line, start_col))
+            elif ch == "]":
+                self._advance()
+                tokens.append(Token(self.TOKEN_RBRACKET, "]", start_line, start_col))
+            elif ch == ":":
+                self._advance()
+                tokens.append(Token(self.TOKEN_COLON, ":", start_line, start_col))
+            elif ch == ",":
+                self._advance()
+                tokens.append(Token(self.TOKEN_COMMA, ",", start_line, start_col))
+            elif ch in ('"', "'"):
+                tokens.append(self._read_string())
+            elif ch.isdigit() or (ch == "-" and self._peek(1).isdigit()):
+                tokens.append(self._read_number())
+            elif ch.isalpha() or ch == "_":
+                tokens.append(self._read_identifier_or_keyword())
+            else:
+                self._advance()
+                tokens.append(Token(self.TOKEN_IDENTIFIER, ch, start_line, start_col))
+        tokens.append(Token(self.TOKEN_EOF, "", self.line, self.column))
+        return tokens
